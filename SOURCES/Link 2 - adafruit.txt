@@ -20,3 +20,23 @@ https://github.com/adafruit/Adafruit-PN532
 5. 
 
 https://www.digikey.com/en/maker/projects/adafruit-feather-rfid-lock/07f1c0b56d8b4705b534aad9a3f41291
+
+6.
+
+http://boingboing.net/2012/08/03/babelfish-adafruits-arduino.html
+
+7.
+
+http://platformio.org/lib/show/29/Adafruit-PN532
+
+8.
+
+https://www.allaboutcircuits.com/projects/read-and-write-on-nfc-tags-with-an-arduino/
+
+9.
+
+http://arduino.stackexchange.com/questions/1072/modifying-serial-message-for-adafruit-nfc-rfid-card
+
+10.
+
+http://www.mobilefish.com/developer/libnfc/libnfc_quickguide_adafruit.html
