@@ -1,0 +1,27 @@
+1. 
+
+http://www.instructables.com/id/Arduino-and-RFID-from-seeedstudio/?ALLSTEPS
+
+2.
+
+http://www.circuitstoday.com/interfacing-rfid-with-arduino
+
+3. How to use Arduino and RFID - video
+
+https://www.youtube.com/watch?v=FeLB6cAN_wI
+
+4. Arduino RFID Tutorial
+
+https://www.youtube.com/watch?v=jgKAyX0h2M8
+
+5. 
+
+http://www.jeremyblum.com/2011/07/08/tutorial-12-for-arduino-rfid-card-reading/
+
+6.
+ 
+http://www.theengineeringprojects.com/2015/08/interfacing-rfid-rc522-arduino.html
+
+7. 
+
+http://stackoverflow.com/questions/32839396/how-to-get-the-uid-of-rfid-in-arduino
