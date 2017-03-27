@@ -25,3 +25,10 @@ http://www.theengineeringprojects.com/2015/08/interfacing-rfid-rc522-arduino.htm
 7. 
 
 http://stackoverflow.com/questions/32839396/how-to-get-the-uid-of-rfid-in-arduino
+
+8. 
+https://opensource.com/education/15/3/arduino-day-adafruit-rfid-tags
+
+https://www.allaboutcircuits.com/projects/read-and-write-on-nfc-tags-with-an-arduino/
+
+https://cdn-learn.adafruit.com/downloads/pdf/adafruit-pn532-rfid-nfc.pdf
