@@ -86,7 +86,7 @@ void loop(void) {
    
     if (success33 && success33)
     {
-      String payloadAsString = "";
+     
       // read successful
       nfc.PrintHexChar(data, 16);
       nfc.PrintHexChar(data2, 16);
