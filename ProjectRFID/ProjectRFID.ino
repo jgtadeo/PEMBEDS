@@ -1,30 +1,15 @@
-/**************************************************************************/
-/*!   
-    Reads the 4 byte (32 bit) ID of a MiFare Classic card.
-    Since the classic cards have only 32 bit identifiers you can stick
-  them in a single variable and use that to compare card ID's as a
-  number. This doesn't work for ultralight cards that have longer 7
-  byte IDs!
-   
-    Note that you need the baud rate to be 115200 because we need to
-  print out the data and read from the card at the same time!
-*/
-/**************************************************************************/
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_PN532.h>
 #include <EEPROM.h>
 #include <RfidDb.h>
 
-RfidDb db = RfidDb(4, 0, 4);
-
-// If using the breakout or shield with I2C, define just the pins connected
-// to the IRQ and reset lines.  Use the values below (2, 3) for the shield!
 #define PN532_IRQ   (2)
-#define PN532_RESET (3)  // Not connected by default on the NFC Shield
+#define PN532_RESET (3)
 
-// Or use this line for a breakout or shield with an I2C connection:
 Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET);
+
+RfidDb db = RfidDb(1000, 255);
 
 void setup(void) {
   EEPROM.put(0, 0);
