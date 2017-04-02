@@ -79,7 +79,6 @@ void loop(void) {
     Serial.println("");
 
     //To read the data from blocks
-    uint8_t block[]={2,3};
     uint8_t data[16];
     uint8_t data2[16];
     uint8_t success3 = nfc.mifareclassic_ReadDataBlock(4, data); //for block 4
