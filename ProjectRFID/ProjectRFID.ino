@@ -1,7 +1,3 @@
-#include <EEPROM.h>
-#include <RfidDb.h>
-
-
 /**************************************************************************/
 /*!   
     Reads the 4 byte (32 bit) ID of a MiFare Classic card.
@@ -17,9 +13,10 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_PN532.h>
+#include <EEPROM.h>
+#include <RfidDb.h>
 
-byte count = 0;
-byte compareId;
+RfidDb db = RfidDb(4, 0, 4);
 
 // If using the breakout or shield with I2C, define just the pins connected
 // to the IRQ and reset lines.  Use the values below (2, 3) for the shield!
@@ -30,9 +27,11 @@ byte compareId;
 Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET);
 
 void setup(void) {
+  EEPROM.put(0, 0);
   Serial.begin(115200);
   Serial.println("Welcome to Asia Pacific College!");
   nfc.begin(); 
+  db.begin();
   // configure board to read RFID tags
   nfc.SAMConfig();
   Serial.println("Waiting... Please tap you card here ...");
@@ -62,8 +61,7 @@ void loop(void) {
       Serial.println("Authentication successful!");
     }
     
-    Serial.print("Number of person: ");Serial.println(count); Serial.println("");
-
+    
     // Display ID of the card 
     uint32_t cardid = uid[0];
     cardid <<= 8;
@@ -75,7 +73,10 @@ void loop(void) {
     Serial.print("ID Number: ");
     Serial.println(cardid);
     
+    db.insert(cardid, "cardid");
 
+    Serial.println("");
+    countPerson();
     Serial.println("");
 
     //To read the data from blocks
@@ -100,5 +101,11 @@ void loop(void) {
       Serial.println("Ooops ... Error!");
     }   
   }
+}
+
+void countPerson(){
+  uint8_t count = db.count();
+  Serial.print("Number of person: ");
+  Serial.print(count);
 }
 
