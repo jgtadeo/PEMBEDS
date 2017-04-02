@@ -67,7 +67,7 @@ void loop(void) {
     Serial.print("  Number of students/professors/visitors: ");Serial.println(count);
     Serial.print("  UID Length: ");Serial.print(uidLength, DEC);Serial.println(" bytes");
     Serial.print("  UID Value: ");
-    nfc.PrintHex(uid, uidLength);   
+    nfc.PrintHex(uid, uidLength);
     
     if (uidLength == 4)
     {
@@ -79,7 +79,7 @@ void loop(void) {
       cardid |= uid[2];  
       cardid <<= 8;
       cardid |= uid[3]; 
-      Serial.print("ID Number: ");
+      Serial.print("Seems to be a Mifare Classic card #");
       Serial.println(cardid);
     }
     Serial.println("");
