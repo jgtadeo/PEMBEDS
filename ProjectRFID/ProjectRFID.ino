@@ -55,6 +55,9 @@ void loop(void) {
   uint8_t success;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
   uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
+
+  uint8_t keya[6] = { 0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5 };
+  uint8_t keyb[6] = { 0xD3, 0xF7, 0xD3, 0xF7, 0xD3, 0xF7 };
     
   // Wait for an ISO14443A type cards (Mifare, etc.).  When one is found
   // 'uid' will be populated with the UID, and uidLength will indicate
@@ -70,7 +73,7 @@ void loop(void) {
     nfc.PrintHex(uid, uidLength);   
     
     if (uidLength == 4)
-    {
+    {  
       // We probably have a Mifare Classic card ... 
       uint32_t cardid = uid[0];
       cardid <<= 8;
@@ -81,8 +84,37 @@ void loop(void) {
       cardid |= uid[3]; 
       Serial.print("ID Number: ");
       Serial.println(cardid);
+    
     }
+
     Serial.println("");
+
+    uint8_t success2 = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, 4, 0, keyb);
+    if (!success2)
+    {
+      Serial.println("Unable to authenticate block 4 ... is this card NDEF formatted?");
+      return;
+    }else{  
+    Serial.println("Authentication succeeded (seems to be an NDEF/NFC Forum tag) ...");
+    }
+
+    uint8_t data[16];
+    uint8_t success3 = nfc.mifareclassic_ReadDataBlock(4, data);
+    
+    if (success3)
+    {
+      // Data seems to have been read ... spit it out
+      Serial.println("Reading Block 4:");
+      nfc.PrintHexChar(data, 16);
+      Serial.println("");
+      
+      // Wait a bit before reading the card again
+       delay(1000);
+    }
+    else
+    {
+      Serial.println("Ooops ... unable to read the requested block.  Try another key?");
+    }
   }
 }
 
