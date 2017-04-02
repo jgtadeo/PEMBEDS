@@ -7,12 +7,16 @@
 #define PN532_IRQ   (2)
 #define PN532_RESET (3)
 
-Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET);
 
-RfidDb db = RfidDb(1000, 255);
+Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET); // use for I2C communication
+
+RfidDb db = RfidDb(1000, 0, 255); //1st param: maximum number of ID that database can hold
+                               //3nd param: byte offset from 0 where the database resides
 
 void setup(void) {
-  EEPROM.put(0, 0);
+  EEPROM.put(0, 0); //1st param: location on where we want to put the data
+                    //2nd param: data to write
+  
   Serial.begin(115200);
   Serial.println("Welcome to Asia Pacific College!");
   nfc.begin(); 
