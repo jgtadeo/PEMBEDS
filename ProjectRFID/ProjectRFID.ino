@@ -1,19 +1,17 @@
+#include <EEPROM.h>
+#include <RfidDb.h>
+
+
 /**************************************************************************/
-/*! 
-    This example will wait for any card or tag, and
-    depending on the size of the UID will attempt to read from it.
-   
-    If the card has a 4-byte UID it is probably a Mifare
-    Classic card, and the following steps are taken:
-   
+/*!   
     Reads the 4 byte (32 bit) ID of a MiFare Classic card.
     Since the classic cards have only 32 bit identifiers you can stick
-	them in a single variable and use that to compare card ID's as a
-	number. This doesn't work for ultralight cards that have longer 7
-	byte IDs!
+  them in a single variable and use that to compare card ID's as a
+  number. This doesn't work for ultralight cards that have longer 7
+  byte IDs!
    
     Note that you need the baud rate to be 115200 because we need to
-	print out the data and read from the card at the same time!
+  print out the data and read from the card at the same time!
 */
 /**************************************************************************/
 #include <Wire.h>
@@ -33,88 +31,75 @@ Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET);
 
 void setup(void) {
   Serial.begin(115200);
-  Serial.println("Hello!");
-
-  nfc.begin();
-
-  uint32_t versiondata = nfc.getFirmwareVersion();
-  
-  // Got ok data, print it out!
-  Serial.print("Found chip PN5"); Serial.println((versiondata>>24) & 0xFF, HEX); 
-  Serial.print("Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC); 
-  Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
-  
+  Serial.println("Welcome to Asia Pacific College!");
+  nfc.begin(); 
   // configure board to read RFID tags
   nfc.SAMConfig();
-  
-  Serial.println("Waiting for your card. Please tap you card here ...");
+  Serial.println("Waiting... Please tap you card here ...");
+  Serial.println("");
 }
 
 
 void loop(void) {
   uint8_t success;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
-  uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
+  uint8_t uidLength;                        // Length of the UID
 
   uint8_t keya[6] = { 0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5 };
   uint8_t keyb[6] = { 0xD3, 0xF7, 0xD3, 0xF7, 0xD3, 0xF7 };
     
-  // Wait for an ISO14443A type cards (Mifare, etc.).  When one is found
-  // 'uid' will be populated with the UID, and uidLength will indicate
-  // if the uid is 4 bytes (Mifare Classic) or 7 bytes (Mifare Ultralight)
   success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
   
   if (success) {
-    // Display some basic information about the card
-    Serial.println("Card Confirmed");
-    Serial.print("  Number of students/professors/visitors: ");Serial.println(count);
-    Serial.print("  UID Length: ");Serial.print(uidLength, DEC);Serial.println(" bytes");
-    Serial.print("  UID Value: ");
-    nfc.PrintHex(uid, uidLength);   
-    
-    if (uidLength == 4)
-    {  
-      // We probably have a Mifare Classic card ... 
-      uint32_t cardid = uid[0];
-      cardid <<= 8;
-      cardid |= uid[1];
-      cardid <<= 8;
-      cardid |= uid[2];  
-      cardid <<= 8;
-      cardid |= uid[3]; 
-      Serial.print("ID Number: ");
-      Serial.println(cardid);
-    
+    //Authentication is needed to read the blocks
+    uint8_t success2 = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, 4, 0, keyb);
+    uint8_t success22 = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, 5, 0, keyb);
+    if (!success2 && !success22)
+    {
+      Serial.println("Authentication Failed! Please try again.");
+      return;
+    }else{  
+      Serial.println("Authentication successful!");
     }
+    
+    Serial.print("Number of person: ");Serial.println(count); Serial.println("");
+
+    // Display ID of the card 
+    uint32_t cardid = uid[0];
+    cardid <<= 8;
+    cardid |= uid[1];
+    cardid <<= 8;
+    cardid |= uid[2];  
+    cardid <<= 8;
+    cardid |= uid[3]; 
+    Serial.print("ID Number: ");
+    Serial.println(cardid);
+    
 
     Serial.println("");
 
-    uint8_t success2 = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, 4, 0, keyb);
-    if (!success2)
-    {
-      Serial.println("Unable to authenticate block 4 ... is this card NDEF formatted?");
-      return;
-    }else{  
-    Serial.println("Authentication succeeded (seems to be an NDEF/NFC Forum tag) ...");
-    }
-
+    //To read the data from blocks
+    uint8_t block[]={2,3};
     uint8_t data[16];
-    uint8_t success3 = nfc.mifareclassic_ReadDataBlock(4, data);
-    
-    if (success3)
+    uint8_t data2[16];
+    uint8_t success3 = nfc.mifareclassic_ReadDataBlock(4, data); //for block 4
+    uint8_t success33 = nfc.mifareclassic_ReadDataBlock(5, data2); //for block 5
+   
+    if (success33 && success33)
     {
-      // Data seems to have been read ... spit it out
-      Serial.println("Reading Block 4:");
+      String payloadAsString = "";
+      // read successful
       nfc.PrintHexChar(data, 16);
+      nfc.PrintHexChar(data2, 16);
       Serial.println("");
       
       // Wait a bit before reading the card again
-       delay(1000);
+       delay(2000);
     }
     else
     {
-      Serial.println("Ooops ... unable to read the requested block.  Try another key?");
-    }
+      Serial.println("Ooops ... Error!");
+    }   
   }
 }
 
