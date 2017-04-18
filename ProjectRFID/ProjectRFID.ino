@@ -34,7 +34,7 @@ void loop(void) {
   uint8_t keyb[6] = { 0xD3, 0xF7, 0xD3, 0xF7, 0xD3, 0xF7 };
     
   uint8_t success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength); 
-  
+ 
   if (success) 
   {
     //Authentication is needed to read the blocks
