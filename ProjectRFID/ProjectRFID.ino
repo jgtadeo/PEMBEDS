@@ -5,6 +5,8 @@
 
 #define PN532_IRQ   (2)
 #define PN532_RESET (3)
+uint32_t owner = 3523540461;
+int counter = 3;
 
 
 Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET); // use for shield with an I2C communication
@@ -42,17 +44,16 @@ void loop(void) {
                                                                                             //2nd Param: Length (4/7 bytes)
                                                                                             //3rd Param: Block Address
                                                                                             //4th Param: Key use to authenticate
-    uint8_t successAuth2 = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, 5, 0, keyb);
-    
-    if (successAuth && successAuth2)
-    {
-      Serial.println("Authentication successful!");
-    }else{  
-      Serial.println("Authentication Failed. Please try again.");
-      Serial.println("");
-      return;
-    }
+//    if (successAuth)
+//    {
+//      Serial.println("Authentication successful!");
+//    }else{  
+//      Serial.println("Authentication Failed. Please try again.");
+//      Serial.println("");
+//      return;
+//    }
 
+         
     Serial.println("");
     // Display ID of the card 
     uint32_t cardid = uid[0];
@@ -64,38 +65,53 @@ void loop(void) {
     cardid |= uid[3]; 
     Serial.print("ID Number: ");
     Serial.println(cardid);
-    
-    db.insert(cardid, "cardid");
 
-    Serial.println("");
-    countPerson();
-    Serial.println("");
+    if(cardid != owner){
+      Serial.print("Authentication failed. Try again. ");
+      Serial.print("");
+       counter--;
+       if(counter == 0){
+        Serial.print("Intruder Alert!!!");
+      }
+    }else{
+      Serial.print("Authentication successful.");
+      Serial.print("");
+      counter = 3;
+    }
+    
+//    db.insert(cardid, "cardid");
+
+//    Serial.println("");
+//    countPerson();
+//    Serial.println("");
 
     //Read the data from blocks
-    uint8_t data[16];
-    uint8_t data2[16];
-    uint8_t successRead = nfc.mifareclassic_ReadDataBlock(4, data); //1st Param: block number, 2nd Param: Data in block
-    uint8_t successRead2 = nfc.mifareclassic_ReadDataBlock(5, data2);
+//    uint8_t data[16];
+//    uint8_t data2[16];
+//    uint8_t successRead = nfc.mifareclassic_ReadDataBlock(4, data); //1st Param: block number, 2nd Param: Data in block
+//    uint8_t successRead2 = nfc.mifareclassic_ReadDataBlock(5, data2);
    
-    if (successRead && successRead2)
-    {     
-      // read successful
-      nfc.PrintHexChar(data, 16);
-      nfc.PrintHexChar(data2, 16);
-      Serial.println("==========================================================================");
-      // Wait a bit before reading the card again
-       delay(2000);
-    }
-    else
-    {
-      Serial.println("Error Occured. Please try again!");
-    }   
+//    if (successRead && successRead2)
+//    {     
+//      // read successful
+//      nfc.PrintHexChar(data, 16);
+//      nfc.PrintHexChar(data2, 16);
+//      Serial.println("==========================================================================");
+//      // Wait a bit before reading the card again
+//       
+//    }
+//    else
+//    {
+//      Serial.println("Error Occured. Please try again!");
+//    }   
   }
+
+  delay(2000);
 }
 
-void countPerson(){
-  uint8_t count = db.count();
-  Serial.print("Number of person: ");
-  Serial.print(count);
-}
+//void countPerson(){
+//  uint8_t count = db.count();
+//  Serial.print("Number of person: ");
+//  Serial.print(count);
+//}
 
