@@ -38,7 +38,6 @@ void setup() {
   pinMode(buzzerPin, OUTPUT);
   
   lcd.begin(16,2);
-  
   lcd.setCursor(0,0);
   lcd.print("Burglar");
   lcd.setCursor(0,1);
@@ -51,21 +50,17 @@ void setup() {
 }
 
 void loop() {
-
-
   while(1){
     code = customKeypad.getKey();
     lcd.setCursor(0,1);
     lcd.print(enterCode);
-    
     if(unlocked){
       lcd.setCursor(0,0);
-      lcd.print("Alarm Disabled!");
+      lcd.print("Alarm Disabled!");  
     }else{
       lcd.setCursor(0,0);
       lcd.print("Alarm Enabled!");
     }
-
 
     if(code=='C'){
       enteredCode = "";

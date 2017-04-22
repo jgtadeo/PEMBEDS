@@ -2,6 +2,9 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_PN532.h>
+#include<LiquidCrystal.h>
+#include<SoftwareSerial.h>
+LiquidCrystal lcd(2,3,4,5,6,7);
 
 #define PN532_IRQ   (2)
 #define PN532_RESET (3)
@@ -9,16 +12,16 @@
 uint32_t owner = 3523540461;
 int counter = 3;
 boolean unlocked = false;
+boolean buzzer_mode = false;
 
 Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET); // use for shield with an I2C communication
 
 void setup(void) {
-  Serial.begin(115200); //for faster reading and printing out data at the same time
+  Serial.begin(9600); //for faster reading and printing out data at the same time
   nfc.begin(); //initializes the nfc (near field communication)
-  
   // configure board to read RFID tags
   nfc.SAMConfig();
-  Serial.print("Waiting... Please tap you card ...");
+//  lcd.print("Waiting... Please tap you card ...");
 }
 
 void loop(void) {
@@ -44,11 +47,10 @@ void loop(void) {
     cardid |= uid[2];  
     cardid <<= 8;
     cardid |= uid[3]; 
-    Serial.print("ID Number: ");
-    Serial.println(cardid);
+    
 
     if(cardid != owner){
-      Serial.print("Authentication failed. Try again. ");
+      //lcd.print("Authentication failed. Try again. ");
       buzzer_mode = true;
        counter--;
        if(counter == 0){
@@ -58,6 +60,8 @@ void loop(void) {
     }else{
       buzzer_mode = false;
       Serial.print("Authentication successful.");
+      Serial.print("ID Number: ");
+      Serial.println(cardid);
       Serial.print("");
       counter = 3;
     }
